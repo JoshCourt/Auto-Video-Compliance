@@ -29,7 +29,11 @@ from datetime import timedelta as tidelt
 import subprocess
 from pathlib import Path
 import shutil
+from EmailUpdate import *
+#from Comp_Control_2 import *
 
+
+media_info_logs_folder = "mediainfo_logs"
 media_info_filename_AND_extension = "mediainfo.txt"
 checked_before_list = "files_done.txt"
 logfilloc = "AVC_LOG.txt"
@@ -327,34 +331,34 @@ def alert_schedulers_and_client(fileloc):
     error_results_comped = set()
     for error_inf in the_errors_list:
         if "Format" in str(error_inf):
-            message_details.add("\nThe Format of the file was incorrect. All files should be provided as .mpg. Otherwise known as MPEG-S. More details provided at the bottom of the email.")
+            message_details.add("\nThe Format of the file was incorrect. All files should be provided as .mpg. Otherwise known as MPEG-S.")
             error_results_comped.add(error_inf)
         elif "Overall bit rate" in str(error_inf):
-            message_details.add("\nThe Overall Bitrate of the file was incorrect. All files should be provided with a CONSTANT bitrate. NOT a VARIABLE Bitrate. More details provided at the bottom of the email.")
+            message_details.add("\nThe Overall Bitrate of the file was incorrect. All files should be provided with a CONSTANT bitrate.")
             error_results_comped.add(error_inf)
         elif "Bit rate mode" in str(error_inf):
-            message_details.add("\nThe Bitrate of the file was incorrect. All files should be provided with a CONSTANT bitrate. NOT a VARIABLE Bitrate. More details provided at the bottom of the email.")
+            message_details.add("\nThe Bitrate of the file was incorrect. All files should be provided with a CONSTANT bitrate.")
             error_results_comped.add(error_inf)
         elif "Width" in str(error_inf):
-            message_details.add("\nThe Width of the file was incorrect. All files should be provided in the dimensions 720 X 576. More details provided at the bottom of the email.")
+            message_details.add("\nThe Width of the file was incorrect. All files should be provided in the dimensions 720 X 576.")
             error_results_comped.add(error_inf)
         elif "Height" in str(error_inf):
-            message_details.add("\nThe Height of the file was incorrect. All files should be provided in the dimensions 720 X 576. More details provided at the bottom of the email.")
+            message_details.add("\nThe Height of the file was incorrect. All files should be provided in the dimensions 720 X 576.")
             error_results_comped.add(error_inf)
         elif "Display aspect ratio" in str(error_inf):
-            message_details.add("\nThe Display aspect ratio was incorrect. All files should be provided Display Aspect Ratio should be set at 16:9. More information can be found at the bottom of the email.")
+            message_details.add("\nThe Display aspect ratio was incorrect. All files should be provided Display Aspect Ratio should be set at 16:9.")
             error_results_comped.add(error_inf)
         elif "Frame rate" in str(error_inf):
-            message_details.add("\nThe Frame Rate was incorrect. All files should be provided at 25 Frames Per Second. More information can be found at the bottom of the email.")
+            message_details.add("\nThe Frame Rate was incorrect. All files should be provided at 25 Frames Per Second.")
             error_results_comped.add(error_inf)
         elif "Scan type" in str(error_inf):
-            message_details.add("\nThe Scan Type was incorrect. All files should be provided as interlaced. Your file was probably provided as Progressive. More information can be found at the bottom of the email.")
+            message_details.add("\nThe Scan Type was incorrect. All files should be provided as interlaced. Your file was probably provided as Progressive. ")
             error_results_comped.add(error_inf)
         elif "Scan order" in str(error_inf):
-            message_details.add("\nThe Scan Order was incorrect. All files should be provided in the scan order \"Top Field First\". More information can be found at the bottom of the email.")
+            message_details.add("\nThe Scan Order was incorrect. All files should be provided in the scan order \"Top Field First\". ")
             error_results_comped.add(error_inf)
         elif "Time code of first frame" in str(error_inf):
-            message_details.add("\nThe Time code of first frame was not set too 00:00:00.00 . All files should be provided with the first frame at 00:00:00.00. These errors usually occur when your video edit doesnt start from the very first frame or the timeline. More information can be found at the bottom of the email.")
+            message_details.add("\nThe Time code of first frame was not set too 00:00:00.00 . All files should be provided with the first frame at 00:00:00.00. These errors usually occur when your video edit doesnt start from the very first frame or the timeline. .")
             error_results_comped.add(error_inf)
         #print(error_inf)
     error_message = "The file : "+str(fileloc)+" has been provided in a non compliant format. Meaning that it cannot be broadcast in its current state. Please see details below.. \n\n"
@@ -365,7 +369,9 @@ def alert_schedulers_and_client(fileloc):
     for err in error_results_comped:
         results_comped = results_comped+str(err)
     message("Final error_results_comped is : ", results_comped)
-
+    EMAIL_MESSAGE = error_message+"\n\n"+results_comped
+    EMAIL_TITLE = "File Unsuitable for Broadcast : "+str(fileloc)
+    email505('infotv.alerts@gmail.com', 'IIiAAa2020', 'joshua.court@information.tv', EMAIL_TITLE, EMAIL_MESSAGE, 'NONE')
 
 include_suffix = (".mp4", ".mpg")
 def check_file(fileloc):
@@ -387,11 +393,12 @@ def check_file(fileloc):
                 delete_all_past_line_in_text_file(media_info_filename, "Audio")
                 if check_compliance(media_info_filename) == False:
                     alert_schedulers_and_client(fileloc)
+                os.remove(media_info_filename)
                 mod_date, creat_date = get_file_creation_and_modified_date(fileloc)
                 update_checked_before_list(fileloc, mod_date, creat_date)
                 os.remove(newfilelocation)
 
-get_list_go("F:/PRIMARY/- SCRIPTING/Auto_Video_Compliance/testfootage")
+get_list_go("C:/Users/Josh/Desktop/Forthington Schtuff")
 with open ("Files_list.txt", "r") as filelist:
     line = filelist.readline()
     cnt = 1
@@ -400,4 +407,5 @@ with open ("Files_list.txt", "r") as filelist:
         check_file(str(line.strip()))
         line = filelist.readline()
         cnt += 1
-print("FINISHED")
+
+message("FINISHED : ", "AVC")
