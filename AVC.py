@@ -20,6 +20,19 @@
                 The email can be the same format but replace "your" wwith "the"?
                 EG. The file in the folder : user9. \nIs not compatible for broadcast because... This could be because....They have been notified to try....to fix the issue
                 EG. Your file in the folder : user9. \nIs not compatible for broadcast because... This could be because....You could try....to fix the issue
+
+                Video Error Details *HEADER*
+
+                Create a List of files that errored and alert schedulers with big list of files. Put details into a master file that can be searched through for details
+
+
+
+****** RECREATE MEDIA INFO MAKER SO THAT IT DOESNT COPY THE VIDEO FILES. MAYBE A SEPERATE SCRIPT JUST MAKES THE MEDIA INFO FILE. SO NOTHING HAS THE ABILITY TO DELETE ANYTHING FROM HE FTP!!! *****
+      ****** RECREATE MEDIA INFO MAKER SO THAT IT DOESNT COPY THE VIDEO FILES. MAYBE A SEPERATE SCRIPT JUST MAKES THE MEDIA INFO FILE. SO NOTHING HAS THE ABILITY TO DELETE ANYTHING FROM HE FTP!!! *****
+           ****** RECREATE MEDIA INFO MAKER SO THAT IT DOESNT COPY THE VIDEO FILES. MAYBE A SEPERATE SCRIPT JUST MAKES THE MEDIA INFO FILE. SO NOTHING HAS THE ABILITY TO DELETE ANYTHING FROM HE FTP!!! *****
+                ****** RECREATE MEDIA INFO MAKER SO THAT IT DOESNT COPY THE VIDEO FILES. MAYBE A SEPERATE SCRIPT JUST MAKES THE MEDIA INFO FILE. SO NOTHING HAS THE ABILITY TO DELETE ANYTHING FROM HE FTP!!! *****
+                 ****** RECREATE MEDIA INFO MAKER SO THAT IT DOESNT COPY THE VIDEO FILES. MAYBE A SEPERATE SCRIPT JUST MAKES THE MEDIA INFO FILE. SO NOTHING HAS THE ABILITY TO DELETE ANYTHING FROM HE FTP!!! *****
+                          ****** RECREATE MEDIA INFO MAKER SO THAT IT DOESNT COPY THE VIDEO FILES. MAYBE A SEPERATE SCRIPT JUST MAKES THE MEDIA INFO FILE. SO NOTHING HAS THE ABILITY TO DELETE ANYTHING FROM HE FTP!!! *****
 """
 
 import os.path, time
@@ -32,7 +45,8 @@ import shutil
 from EmailUpdate import *
 #from Comp_Control_2 import *
 
-
+old_logfiles_folder = "Old_Logfiles"
+scheduler_logfile = str(dt.today().strftime('%X')).replace(":", "_")+"Uncompliant Videos List.txt"
 media_info_logs_folder = "mediainfo_logs"
 media_info_filename_AND_extension = "mediainfo.txt"
 checked_before_list = "files_done.txt"
@@ -60,24 +74,24 @@ sys.stdout = Logger()
 ## Make Log File
 
 def cpit(from22, to22):
-    print("Copying "+str(from22)+" TOO "+str(to22))
+    #print("Copying "+str(from22)+" TOO "+str(to22))
     shutil.copy(from22, to22)
 
 def get_file_creation_and_modified_date(fileloc):
-    print("Last modified: %s" % time.ctime(os.path.getmtime(fileloc)))
+    #print("Last modified: %s" % time.ctime(os.path.getmtime(fileloc)))
     LM_date = time.ctime(os.path.getmtime(fileloc))
-    print("Created: %s" % time.ctime(os.path.getctime(fileloc)))
+    #print("Created: %s" % time.ctime(os.path.getctime(fileloc)))
     C_date = time.ctime(os.path.getctime(fileloc))
     return LM_date, C_date
 
 def message(message, string_to_print):
     #timap = Time at present
     timap = dt.today().strftime('%X')
-    print("MESSAGE : "+str(timap)+" "+message+" "+str(string_to_print))
+    #print("MESSAGE : "+str(timap)+" "+message+" "+str(string_to_print))
 
 
 def make_media_info_file(Media_Info_filename):
-    print(dt.today().strftime('%X')+" : Making Media Info Dimensions File : "+str(Media_Info_filename))
+    #print(dt.today().strftime('%X')+" : Making Media Info Dimensions File : "+str(Media_Info_filename))
     with open(Media_Info_filename, "w") as fl:
         fl.write(" ")
         fl.close()
@@ -96,7 +110,7 @@ def delete_all_past_line_in_text_file(textfileloc, stringtosearch):
         line = oldfile.readline()
         cnt = 1
         while line:
-            print("Line {}: {}".format(cnt, line.strip()))
+            #print("Line {}: {}".format(cnt, line.strip()))
             line = oldfile.readline()
             cnt += 1
             message("delete_all_past_line_in_text_file STARTING : ", textfileloc)
@@ -128,15 +142,16 @@ def search_for_string_in_CheckedBeforeList_file(string):
             message("search_for_string. line checking is : ", line)
             if line.strip() in str(string):
                 message("FOUND : search_for_string. string searching for is : ", string)
+                print("+ File has been checked before. ")
                 fin.close()
                 return True
         fin.close()
         message("search_for_string. string searching for is : ", string)
-        print("COULD NOT FIND STRING. RETURNING FALSE")
+        #print("COULD NOT FIND STRING. RETURNING FALSE")
         return False
 
 def search_for_MODdate_in_CheckedBeforeList_file(filetosearchfor, date):
-    print("search for mod date starting")
+    #print("search for mod date starting")
     with open(checked_before_list) as fin:
         for line in fin:
             message("line check is : ", line)
@@ -146,23 +161,23 @@ def search_for_MODdate_in_CheckedBeforeList_file(filetosearchfor, date):
                     the_new_line = next(fin).strip()
                     message("the_new_line is : ", the_new_line)
                     if i == 0:
-                        print("line 1 : MOD DATE")
+                        #print("line 1 : MOD DATE")
                         message("Previous mod date is : ", the_new_line)
                         if the_new_line in date:
-                            print("MOD DATE MATCHED! :")
+                            #print("MOD DATE MATCHED! :")
                             fin.close()
                             return True
                         else:
-                            print("MOD DATE DOESNT MATCH.\nMOD DATE ON FILE : "+str(the_new_line)+"\nMOD DATE CHECKED : "+str(date))
+                            #print("MOD DATE DOESNT MATCH.\nMOD DATE ON FILE : "+str(the_new_line)+"\nMOD DATE CHECKED : "+str(date))
                             fin.close()
                             return False
-                    print(".................. THIS SHOULDN'T PRINT ..................")
+                    #print(".................. THIS SHOULDN'T PRINT ..................")
 
         fin.close()
         return False
 
 def search_for_CREATEdate_in_CheckedBeforeList_file(filetosearchfor, date):
-    print("search for create date starting")
+    #print("search for create date starting")
     with open(checked_before_list) as fin:
         for line in fin:
             message("line check is : ", line)
@@ -172,17 +187,18 @@ def search_for_CREATEdate_in_CheckedBeforeList_file(filetosearchfor, date):
                     the_new_line = next(fin).strip()
                     message("the_new_line is : ", the_new_line)
                     if i == 1:
-                        print("line 1 : MOD DATE")
+                        #print("line 1 : MOD DATE")
                         message("Previous create date is : ", the_new_line)
                         if the_new_line in date:
-                            print("CREATE DATE MATCHED! :")
+                            #print("CREATE DATE MATCHED! :")
                             fin.close()
                             return True
                         else:
-                            print("CREATE DATE DOESNT MATCH.\nCREATE DATE ON FILE : "+str(the_new_line)+"\nCREATE DATE CHECKED : "+str(date))
+                            #print("CREATE DATE DOESNT MATCH.\nCREATE DATE ON FILE : "+str(the_new_line)+"\nCREATE DATE CHECKED : "+str(date))
+                            #print("- File has been changed since last check. ")
                             fin.close()
                             return False
-                    print(".................. THIS SHOULDN'T PRINT ..................")
+                    #print(".................. THIS SHOULDN'T PRINT ..................")
 
         fin.close()
         return False
@@ -209,22 +225,26 @@ def check_if_checked_before(fileloc):
     message("mod_date is : ", mod_date)
     message("creat_date is : ", creat_date)
     if search_for_string_in_CheckedBeforeList_file(fileloc) == False:
-        print("FILE not mentioned in Checked before list. RETURNING FALSE")
+        #print("FILE not mentioned in Checked before list. RETURNING FALSE")
+        print("- File has not been compliancy checked before.")
         return False
     elif search_for_MODdate_in_CheckedBeforeList_file(fileloc, mod_date) == False:
-        print("MOD DATE ISNT CORRECT / UP TO DATE ON FILE. RETURNING FALSE")
+        #print("MOD DATE ISNT CORRECT / UP TO DATE ON FILE. RETURNING FALSE")
+        print("- File has been modified since last check.")
         return False
     elif search_for_CREATEdate_in_CheckedBeforeList_file(fileloc, creat_date) == False:
-        print("CREATE DATE ISNT CORRECT / UP TO DATE ON FILE. RETURNING FALSE")
+        #print("CREATE DATE ISNT CORRECT / UP TO DATE ON FILE. RETURNING FALSE")
+        print("- File has been Re-Uploaded since last check.")
         return False
     else:
-        print("FILE HAS BEEN CHECK BEFORE AND ALL DETAILS ARE CORRECT. RETURNING TRUE")
+        #print("FILE HAS BEEN CHECK BEFORE AND ALL DETAILS ARE CORRECT. RETURNING TRUE")
+        print("+ File has not changed since last check.")
         return True
 
 
 def put_media_info_in_media_info_file(fileloc, Media_Info_filename):
     """ REQUIRES MEDIAINFO EXE IN OPERATING FOLDER """
-    print(dt.today().strftime('%X')+" : STARTING : MediaInfo")
+    #print(dt.today().strftime('%X')+" : STARTING : MediaInfo")
     command = "MediaInfo \""+str(fileloc)+"\" > \""+Media_Info_filename+"\""
     message("Command is : ", command)
     subprocess.call(command, shell=True)
@@ -250,57 +270,61 @@ def error_in_compliance_check(error_line):
     global Error_in_Compliance_Check
     Error_in_Compliance_Check = error_line
 
-def runcheck(line, Error_Count):
-    if "Format                                   :" in line:
-        if "Format                                   : MPEG-PS" not in line and "Format                                   : MPEG Video" not in line:
-            message("Format is incorrect. : \n", line)
-            error_in_compliance_check(line)
-            return False
-    elif "Overall bit rate mode                    :" in line:
-        if "Overall bit rate mode                    : Constant" not in line:
-            message("Overall bit rate mode is incorrect. : \n", line)
-            error_in_compliance_check(line)
-            return False
-    elif "Bit rate mode                            :" in line:
-        if "Bit rate mode                            : Constant" not in line:
-            message("Bit rate mode is incorrect. : \n", line)
-            error_in_compliance_check(line)
-            return False
-    elif "Width                                    :" in line:
-        if "Width                                    : 720 pixels" not in line:
-            message("Width is incorrect. : \n", line)
-            error_in_compliance_check(line)
-            return False
-    elif "Height                                   :" in line:
-        if "Height                                   : 576 pixels" not in line:
-            message("Height is incorrect. : \n", line)
-            error_in_compliance_check(line)
-            return False
-    elif "Display aspect ratio                     :" in line:
-        if "Display aspect ratio                     : 16:9" not in line:
-            message("Display aspect ratio is incorrect. : \n", line)
-            error_in_compliance_check(line)
-            return False
-    elif "Frame rate                               :" in line:
-        if "Frame rate                               : 25.000 FPS" not in line:
-            message("Frame rate is incorrect. : \n", line)
-            error_in_compliance_check(line)
-            return False
-    elif "Scan type                                :" in line:
-        if "Scan type                                : Interlaced" not in line:
-            message("Scan type is incorrect. : \n", line)
-            error_in_compliance_check(line)
-            return False
-    elif "Scan order                                :" in line:
-        if "Scan order                               : Top Field First" not in line:
-            message("Scan order is incorrect. : \n", line)
-            error_in_compliance_check(line)
-            return False
-    elif "Time code of first frame                 :" in line:
-        if "Time code of first frame                 : 00:00:00:00" not in line:
-            message("Time code of first frame is incorrect. : \n", line)
-            error_in_compliance_check(line)
-            return False
+def runcheck(line, Error_Count, profile):
+    """
+        This Function should also have a "profile" argument. GLOABALLED??
+    """
+    if profile == "arqiva_sd":
+        if "Format                                   :" in line:
+            if "Format                                   : MPEG-PS" not in line and "Format                                   : MPEG Video" not in line:
+                message("Format is incorrect. : \n", line)
+                error_in_compliance_check(line)
+                return False
+        elif "Overall bit rate mode                    :" in line:
+            if "Overall bit rate mode                    : Constant" not in line:
+                message("Overall bit rate mode is incorrect. : \n", line)
+                error_in_compliance_check(line)
+                return False
+        elif "Bit rate mode                            :" in line:
+            if "Bit rate mode                            : Constant" not in line:
+                message("Bit rate mode is incorrect. : \n", line)
+                error_in_compliance_check(line)
+                return False
+        elif "Width                                    :" in line:
+            if "Width                                    : 720 pixels" not in line:
+                message("Width is incorrect. : \n", line)
+                error_in_compliance_check(line)
+                return False
+        elif "Height                                   :" in line:
+            if "Height                                   : 576 pixels" not in line:
+                message("Height is incorrect. : \n", line)
+                error_in_compliance_check(line)
+                return False
+        elif "Display aspect ratio                     :" in line:
+            if "Display aspect ratio                     : 16:9" not in line:
+                message("Display aspect ratio is incorrect. : \n", line)
+                error_in_compliance_check(line)
+                return False
+        elif "Frame rate                               :" in line:
+            if "Frame rate                               : 25.000 FPS" not in line:
+                message("Frame rate is incorrect. : \n", line)
+                error_in_compliance_check(line)
+                return False
+        elif "Scan type                                :" in line:
+            if "Scan type                                : Interlaced" not in line:
+                message("Scan type is incorrect. : \n", line)
+                error_in_compliance_check(line)
+                return False
+        elif "Scan order                                :" in line:
+            if "Scan order                               : Top Field First" not in line:
+                message("Scan order is incorrect. : \n", line)
+                error_in_compliance_check(line)
+                return False
+        elif "Time code of first frame                 :" in line:
+            if "Time code of first frame                 : 00:00:00:00" not in line:
+                message("Time code of first frame is incorrect. : \n", line)
+                error_in_compliance_check(line)
+                return False
 
 
 def check_compliance(Media_Info_filename):
@@ -312,21 +336,26 @@ def check_compliance(Media_Info_filename):
         Are_There_Errors = "False"
         Errors_list = []
         while line:
-            print("Line {}: {}".format(cnt, line.strip()))
+            #print("Line {}: {}".format(cnt, line.strip()))
             line = fp.readline()
             cnt += 1
-            if runcheck(line, Error_Count) == False:
+            if runcheck(line, Error_Count, "arqiva_sd") == False:
                 Are_There_Errors = "True"
                 Error_Count += 1
-                Errors_list.append(str(Error_in_Compliance_Check))
+                Errors_list.append("    "+str(Error_in_Compliance_Check))
         if Are_There_Errors == "True":
             global the_errors_list
             the_errors_list = Errors_list
             return False
 
-def alert_schedulers_and_client(fileloc):
+def create_logfile_for_schedulers():
+    with open(scheduler_logfile, "w") as logington:
+        logington.write(dt.today().strftime('%X')+"\n")
+    logington.close()
+
+def compile_alert_too_schedulers_and_alert_client(fileloc):
     message("alert_schedulers_and_client on : ", fileloc)
-    print("Errors are : \n")
+    print("- ALERT : File has the following errors : \n")
     message_details = set()
     error_results_comped = set()
     for error_inf in the_errors_list:
@@ -360,7 +389,7 @@ def alert_schedulers_and_client(fileloc):
         elif "Time code of first frame" in str(error_inf):
             message_details.add("\nThe Time code of first frame was not set too 00:00:00.00 . All files should be provided with the first frame at 00:00:00.00. These errors usually occur when your video edit doesnt start from the very first frame or the timeline. .")
             error_results_comped.add(error_inf)
-        #print(error_inf)
+        print(error_inf)
     error_message = "The file : "+str(fileloc)+" has been provided in a non compliant format. Meaning that it cannot be broadcast in its current state. Please see details below.. \n\n"
     for mess in message_details:
         error_message = error_message+str(mess)
@@ -369,11 +398,37 @@ def alert_schedulers_and_client(fileloc):
     for err in error_results_comped:
         results_comped = results_comped+str(err)
     message("Final error_results_comped is : ", results_comped)
-    EMAIL_MESSAGE = error_message+"\n\n"+results_comped
+    EMAIL_MESSAGE = error_message+"\nVideo Error Details\n"+results_comped
     EMAIL_TITLE = "File Unsuitable for Broadcast : "+str(fileloc)
+    append_email_details_too_scheduler_logfile(str(fileloc), results_comped)
+
+    # I could make the following email505 into a function that emails the correct client if needed.
     email505('infotv.alerts@gmail.com', 'IIiAAa2020', 'joshua.court@information.tv', EMAIL_TITLE, EMAIL_MESSAGE, 'NONE')
 
-include_suffix = (".mp4", ".mpg")
+
+
+include_suffix = (".mp4", ".mpg", ".mpeg")
+def mvit(from11, to11):
+    #print("Moving "+from11+" TOO "+to11)
+    shutil.move(from11, to11)
+
+def move_logfile_too_old_logfiles_folder():
+    move_here = os.path.join(old_logfiles_folder, scheduler_logfile)
+    mvit(scheduler_logfile, move_here)
+
+def append_email_details_too_scheduler_logfile(file_location, vid_error_details):
+    with open(scheduler_logfile, "a") as log_app:
+        write_this = str(file_location)+"\n"+str(vid_error_details)+"\n"
+        log_app.write(write_this)
+    log_app.close()
+
+
+def send_logfile_too_schedulers():
+    email505('infotv.alerts@gmail.com', 'IIiAAa2020', 'joshua.court@information.tv', "Uncompliant Videos List", "NEW Uncompliant Videos have been found in the FTP.\nPlease see attached...", scheduler_logfile)
+    time.sleep(5)
+    email505('infotv.alerts@gmail.com', 'IIiAAa2020', 'jci.inquire@gmail.com', "Uncompliant Videos List", "NEW Uncompliant Videos have been found in the FTP.\nPlease see attached...", scheduler_logfile)
+
+
 def check_file(fileloc):
     fileloc = fileloc[2:-1]
     fileloc = Path(fileloc)
@@ -392,20 +447,68 @@ def check_file(fileloc):
                 put_media_info_in_media_info_file(newfilelocation, media_info_filename)
                 delete_all_past_line_in_text_file(media_info_filename, "Audio")
                 if check_compliance(media_info_filename) == False:
-                    alert_schedulers_and_client(fileloc)
+                    compile_alert_too_schedulers_and_alert_client(fileloc)
                 os.remove(media_info_filename)
                 mod_date, creat_date = get_file_creation_and_modified_date(fileloc)
                 update_checked_before_list(fileloc, mod_date, creat_date)
                 os.remove(newfilelocation)
 
-get_list_go("C:/Users/Josh/Desktop/Forthington Schtuff")
+
+
+def check_file2(fileloc):
+    fileloc = fileloc[2:-1]
+    fileloc = Path(fileloc)
+    message("Checking File : ", fileloc)
+    global compliance_alert
+    compliance_alert = "NONE"
+    if str(fileloc).endswith(include_suffix):
+        only_filename = return_only_filename(str(fileloc))
+        print("\n==Checking : "+str(only_filename))
+        if not check_if_checked_before(fileloc) == True:
+            if str(fileloc).endswith(include_suffix):
+                #cpit(fileloc, scriptlocAVC)
+                #newfilelocation = os.path.join(scriptlocAVC, only_filename)
+
+                #filnam = split_fileloc_return_filename_with_full_path_without_extension(fileloc)
+                media_info_filename = only_filename+media_info_filename_AND_extension
+                message("Making media_info_filename : ", media_info_filename)
+                make_media_info_file(media_info_filename)
+                put_media_info_in_media_info_file(fileloc, media_info_filename)
+                delete_all_past_line_in_text_file(media_info_filename, "Audio")
+                if check_compliance(media_info_filename) == False:
+                    compile_alert_too_schedulers_and_alert_client(fileloc)
+                    compliance_alert = "CONFIRMED"
+                else:
+                    print("+ File is compliant.")
+                #os.remove(media_info_filename)
+                mod_date, creat_date = get_file_creation_and_modified_date(fileloc)
+                update_checked_before_list(fileloc, mod_date, creat_date)
+
+                #os.remove(newfilelocation)
+
+
+get_list_go("F:/InfoTV/Edits/Promos/Dust Of War/Tuesday 10pm")
+
+#get_list_go("D:/Scripting/Auto-Video-Compliance/FTP_SERVER")
+#get_list_go("D:/Scripting/EX_RE/footageold")
+
+"""
+NEED TOO ADD PROFILE GLOBAL ARGUMENT
+
+"""
+
+create_logfile_for_schedulers()
 with open ("Files_list.txt", "r") as filelist:
     line = filelist.readline()
     cnt = 1
     while line:
-        print("Checking FILE {}: {}".format(cnt, line.strip()))
-        check_file(str(line.strip()))
+        #print("Checking FILE {}: {}".format(cnt, line.strip()))
+        check_file2(str(line.strip()))
         line = filelist.readline()
         cnt += 1
 
+if compliance_alert == "CONFIRMED":
+    print("SENDING LOGFILE TO SCHEDULERS")
+    send_logfile_too_schedulers()
+move_logfile_too_old_logfiles_folder()
 message("FINISHED : ", "AVC")

@@ -53,4 +53,4 @@ def email505(emailaccountfrom, password505, emailaccounttoo, subject505, message
     server.quit()
 
 
-email505('infotv.alerts@gmail.com', 'IIiAAa2020', 'joshua.court@information.tv', 'THIS IS A TEST', 'This message is a test. \nIwant to see if i can add lines ect \n\nyeet', 'NONE')
+#email505('infotv.alerts@gmail.com', 'IIiAAa2020', 'joshua.court@information.tv', 'THIS IS A TEST', 'This message is a test. \nIwant to see if i can add lines ect \n\nyeet', 'NONE')

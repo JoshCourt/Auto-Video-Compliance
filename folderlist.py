@@ -42,7 +42,7 @@ def getListOfFiles(dirName):
     return allFiles
 
 # "Y:"
-include_suffix = (".mp4", ".mpg")
+include_suffix = (".mp4", ".mpg", ".mpeg", ".mov", ".mkv", ".avi")
 def get_list_go(dir):
 
     dirName = str(dir)
@@ -53,7 +53,7 @@ def get_list_go(dir):
     # Make a Record of the files
     with open("Files_list.txt", "w+") as file:
         for elem in listOfFiles:
-            print(elem.encode("utf-8"))
+            #print(elem.encode("utf-8"))
             if elem.endswith(include_suffix):
                 file.write(str(elem.encode("utf-8"))+"\n")
     file.close()
